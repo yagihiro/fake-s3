@@ -14,4 +14,4 @@ EXPOSE 4569
 RUN apk del build-base ruby-dev && rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["bundle", "exec"]
-CMD ["fakes3", "-r", "$ROOT", "-p",  "4569", "--reuse_address"]
+CMD ["fakes3", "-r", "/app", "-p",  "4569", "--reuse_address"]
