@@ -572,6 +572,12 @@ module FakeS3
       end
 
       @server = WEBrick::HTTPServer.new(webrick_config)
+
+      if extra_options[:reuse_address]
+        @server.listeners.each do |socket|
+          socket.setsockopt Socket::SOL_SOCKET, Socket::SO_REUSEADDR, true
+        end
+      end
     end
 
     def serve

@@ -12,6 +12,7 @@ module FakeS3
     method_option :address, :type => :string, :aliases => '-a', :required => false, :desc => "Bind to this address. Defaults to all IP addresses of the machine."
     method_option :hostname, :type => :string, :aliases => '-H', :desc => "The root name of the host.  Defaults to s3.amazonaws.com."
     method_option :quiet, :type => :boolean, :aliases => '-q', :desc => "Quiet; do not write anything to standard output."
+    method_option :reuse_address, :type => :boolean, :aliases => '-R', :desc => "Use SO_REUSEADDR option."
     method_option :limit, :aliases => '-l', :type => :string, :desc => 'Rate limit for serving (ie. 50K, 1.0M)'
     method_option :sslcert, :type => :string, :desc => 'Path to SSL certificate'
     method_option :sslkey, :type => :string, :desc => 'Path to SSL certificate key'
@@ -54,7 +55,11 @@ module FakeS3
       end
 
       puts "Loading FakeS3 with #{root} on port #{options[:port]} with hostname #{hostname}" unless options[:quiet]
-      server = FakeS3::Server.new(address,options[:port],store,hostname,ssl_cert_path,ssl_key_path, quiet: !!options[:quiet])
+      extra_options ||= {
+        quiet: !!options[:quiet],
+        reuse_address: !!options[:reuse_address]
+      }
+      server = FakeS3::Server.new(address,options[:port],store,hostname,ssl_cert_path,ssl_key_path,extra_options)
       server.serve
     end
 
