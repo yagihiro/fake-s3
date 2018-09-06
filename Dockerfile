@@ -1,13 +1,14 @@
-FROM alpine:3.4
+FROM ruby:alpine
+MAINTAINER Hiroki Yagita <yagihiro@gmail.com>
 
-RUN apk add --no-cache --update ruby ruby-dev ruby-bundler python py-pip git build-base libxml2-dev libxslt-dev
-RUN pip install boto s3cmd
-
-COPY fakes3.gemspec Gemfile Gemfile.lock /app/
-COPY lib/fakes3/version.rb /app/lib/fakes3/
-
-WORKDIR /app
+ADD Gemfile /
+ADD Gemfile.lock /
 
 RUN bundle install
 
-COPY . /app/
+EXPOSE 4569
+
+WORKDIR /fakes3_root
+
+ENTRYPOINT ["bundle", "exec"]
+CMD ["fakes3", "-r",  "/fakes3_root", "-p",  "4569", "--reuse_address"]
